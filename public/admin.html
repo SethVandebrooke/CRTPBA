@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sockets Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body>
+    <script src="socket.js"></script>
+    <script>
+      const socket = io('http://localhost:8080');
+      window.authenticated = false;
+
+      //Authentication
+      function attemptAuth() {
+        socket.emit('checkAuth', function (auth){
+          if (auth) {
+            window.authenticated = true;
+          } else {
+            var creds = {};
+            creds.username = localStorage.getItem("username") || prompt("Username");
+            creds.password = localStorage.getItem("password") || prompt("Password");
+            socket.emit('auth', creds, function(authenticated){
+              window.authenticated = authenticated;
+              if (authenticated) {
+                if (!localStorage.getItem("username")) { // if this was not auto authenticated
+                  alert("Authentication passed!");
+                  localStorage.setItem("username",creds.username);
+                  localStorage.setItem("password",creds.password);
+                }
+              } else {
+                alert("Authentication failed.");
+              }
+            });
+          }
+        });
+      }
+
+      // Command constructor
+      function Command(name, type, packet, extra) {
+        var c = this;
+        c.name = name || "echo";
+        c.type = type || "global";
+        c.packet = packet || {};
+         if (extra && typeof extra == "object") {
+           for (var k in extra) {
+             c[k] = extra[k];
+           }
+         }
+      }
+
+      attemptAuth();
+    </script>
+  </body>
+</html>

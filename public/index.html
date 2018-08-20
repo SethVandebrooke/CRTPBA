@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sockets Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+
+  <body>
+    <script src="socket.js"></script>
+    <script>
+      const socket = io('http://localhost:8080');
+
+      socket.on('test',function(packet){
+        console.log(packet);
+      });
+
+    </script>
+  </body>
+</html>
